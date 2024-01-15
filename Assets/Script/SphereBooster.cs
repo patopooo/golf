@@ -17,7 +17,7 @@ public class SphereBooster : MonoBehaviour
 	Vector3 forceDirection = new Vector3(1.0f, 1.0f, 0f);
 
 	// 飛行中フラグ
-	bool isFlying = false;//false:飛んでない
+	bool isFlying = false;
 
 	// ボタン押下フラグ
 	bool isBoostPressed = false;
@@ -33,12 +33,6 @@ public class SphereBooster : MonoBehaviour
 
 	// Rigidbodyコンポーネントへの参照をキャッシュ
 	Rigidbody rb;
-
-	public bool isFly()
-    {
-		return isFlying;
-
-	}
 
 	void Start()
 	{
