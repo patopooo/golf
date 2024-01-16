@@ -15,9 +15,10 @@ public class CameraScroll : MonoBehaviour
     GameObject fades;
     Fade fade;
     public new Transform camera;
-    //デバッグ
-    public Vector3 fix;
-    public Quaternion fixRot;
+    //固定位置、ステージの初期位置
+    public GameObject[] subcamera;
+    Vector3 fix;
+    Quaternion fixRot;
     
     public Text text; //モード確認用
     MODE mode;//モード管理
@@ -36,6 +37,7 @@ public class CameraScroll : MonoBehaviour
         camera = GetComponent<Transform>();
         offset = transform.position - Sphere.transform.position;
         mode = MODE.FIX;
+        FixPointInit(0);
     }
 
     // Update is called once per frame
@@ -103,10 +105,12 @@ public class CameraScroll : MonoBehaviour
 
     void FollowMove()
     {
+        //Vector3 loclpos= Sphere.transform.position + offset;
+        //transform.position= loclpos;
         transform.position = Sphere.transform.position + offset;
     }
 
-    void ChangeMode()
+    public void ChangeMode()
     {
         if (!fade.isFadeout&&!fade.isFadeIn)
         {
@@ -126,6 +130,8 @@ public class CameraScroll : MonoBehaviour
                     break;
                 case MODE.MOVED:
                     mode = MODE.FOLLOW;
+                    offset = transform.position - Sphere.transform.position;
+                    transform.position = Sphere.transform.position;
                     text.text = "CameraMove:FOLLOW";
                     break;
                 case MODE.FOLLOW:
@@ -135,5 +141,11 @@ public class CameraScroll : MonoBehaviour
             }
             changeflag = false;
         }
+    }
+
+    public void FixPointInit(int stageNo)
+    {
+        fix=subcamera[stageNo].transform.position;
+        fixRot= subcamera[stageNo].transform.rotation;
     }
 }
