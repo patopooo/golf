@@ -57,11 +57,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\SphereBooster.cs" />
+    <Compile Include="Assets\Scripts\CameraScroll.cs" />
     <Compile Include="Assets\Scripts\CameraController.cs" />
+    <Compile Include="Assets\Scripts\Fade.cs" />
     <Compile Include="Assets\Scripts\TriggerChecker.cs" />
     <Compile Include="Assets\Scripts\GuideManager.cs" />
-    <Compile Include="Assets\Scripts\CameraScroll.cs" />
-    <Compile Include="Assets\Scripts\Fade.cs" />
+    <Compile Include="Assets\Scripts\FastForward.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
