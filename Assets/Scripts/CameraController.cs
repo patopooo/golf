@@ -39,6 +39,9 @@ public class CameraController : MonoBehaviour
 	[SerializeField, Range(OffsetMin, OffsetMax)]
 	int magnify = 100;
 
+	// カメラがボールに追随するかのフラグ
+	bool isTracing = true;
+
 	void Start()
 	{
 		// オフセットを計算する
@@ -54,8 +57,11 @@ public class CameraController : MonoBehaviour
 		// カメラの拡大率に応じたオフセットを取得
 		Vector3 magnifiedOffset = GetMagnifiedOffset();
 
-		// 『Sphere』オブジェクトとオフセットからカメラの現在位置を計算
-		gameObject.transform.position = player.transform.position + magnifiedOffset;
+		if (isTracing)
+		{
+			// 『Sphere』オブジェクトとオフセットからカメラの現在位置を計算
+			gameObject.transform.position = player.transform.position + magnifiedOffset;
+		}
 	}
 
 	Vector3 GetMagnifiedOffset()
@@ -81,5 +87,11 @@ public class CameraController : MonoBehaviour
 
 		// ZoomTextに文字列を設定
 		zoomText.text = zoomTextPrefix + magnify.ToString() + zoomTextSuffix;
+	}
+
+	public void SetTracingState(bool isActive)
+	{
+		// 外部からisTracingフラグをセットする
+		isTracing = isActive;
 	}
 }

@@ -42,6 +42,14 @@ public class SphereBooster : MonoBehaviour
 	[SerializeField]
 	GameObject goalTextObject;
 
+	// カメラオブジェクトへの参照
+	[SerializeField]
+	GameObject cameraObject;
+
+	// ミステキストオブジェクトへの参照
+	[SerializeField]
+	GameObject fallTextObject;
+
 	// 加える力の大きさ
 	float forceMagnitude = 0f;
 
@@ -95,7 +103,7 @@ public class SphereBooster : MonoBehaviour
 
 	// メーターの速さ
 	[SerializeField]
-	float meterSpeed = 0.2f;
+	float meterSpeed = 0.01f;
 
 	// メーターが最大値になった時のディレイ
 	[SerializeField]
@@ -144,6 +152,9 @@ public class SphereBooster : MonoBehaviour
 	// ゴール済みフラグ
 	bool hasReachedGoal = false;
 
+	// カメラコントローラへの参照キャッシュ
+	CameraController cameraController;
+
 	void Start()
 	{
 		rb = gameObject.GetComponent<Rigidbody>();
@@ -157,6 +168,8 @@ public class SphereBooster : MonoBehaviour
 		guideManager = guideManagerObject.GetComponent<GuideManager>();
 
 		boostButton = boostButtonObject.GetComponent<Button>();
+
+		cameraController = cameraObject.GetComponent<CameraController>();
 
 		// DistanceTextとHighScoreTextの初期値をセット
 		SetDistanceText(0f);
@@ -325,7 +338,14 @@ public class SphereBooster : MonoBehaviour
 		if (other.gameObject.tag == fallCheckerTag)
 		{
 			// 相手が落下判定用オブジェクトだった時の処理
-			StopFlying();
+			// 距離測定フラグをfalseにする
+			isCheckingDistance = false;
+
+			// カメラ追随フラグをfalseにする
+			cameraController.SetTracingState(false);
+
+			// ミステキストのアニメーションを開始
+			StartCoroutine(MissAnimation(0.8f));
 		}
 	}
 
@@ -592,5 +612,50 @@ public class SphereBooster : MonoBehaviour
 		}
 		// 移動先位置をセット
 		rt.localPosition = targetPos;
+	}
+
+	IEnumerator MissAnimation(float time)
+	{
+		// 落下時のアニメーション処理
+		RectTransform rt = fallTextObject.GetComponent<RectTransform>();
+
+		// ミステキストオブジェクトの初期位置と移動先位置
+		Vector3 initTextPos = rt.localPosition;
+		Vector3 targetPos = Vector3.zero;
+
+		// 引数で渡された秒数を足した時間(現在時刻に足す)
+		float finishTime = Time.time + time;
+
+		while (true)
+		{
+			// 処理完了の時刻に達したかの確認
+			float diff = finishTime - Time.time;
+			if (diff <= 0)
+			{
+				break;
+			}
+			// Lerpを計算するために時間進行度を計算
+			float rate = 1 - Mathf.Clamp01(diff / time);
+
+			// 初期位置から移動先位置までの直線上で、割合に応じた位置をセット
+			rt.localPosition = Vector3.Lerp(initTextPos, targetPos, rate);
+
+			// 1フレーム待機
+			yield return null;
+		}
+		// 移動先位置をセット
+		rt.localPosition = targetPos;
+
+		// ウェイト
+		yield return new WaitForSeconds(2.0f);
+
+		// ミステキストを元の位置に戻す
+		rt.localPosition = initTextPos;
+
+		// カメラコントローラで追随フラグをtrueにする
+		cameraController.SetTracingState(true);
+
+		// ボールを打った場所に戻して再開
+		StopFlying();
 	}
 }
