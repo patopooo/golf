@@ -4,5 +4,11 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/golf/Scenes/golf1.unity
+    guid: 71ccaedf1aced8e449b3e68724eca3f1
+  - enabled: 1
+    path: Assets/golf/Scenes/TItle.unity
+    guid: 0c57d0ffb99660842b536393068ec13b
   m_configObjects: {}
