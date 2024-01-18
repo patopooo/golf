@@ -7,10 +7,13 @@ public class CameraScroll : MonoBehaviour
 {
     enum MODE//モード
     {
-        FIX,
-        MOVED,
-        FOLLOW
+        FIX,//ステージ全体の俯瞰
+        MOVED,//自由にステージ移動可能
+        FOLLOW//自動で追従
     };
+
+    static Vector3 vec10 = new Vector3(10, 10, 10);
+
     SphereBooster sphereBooster;
     GameObject fades;
     Fade fade;
@@ -65,48 +68,65 @@ public class CameraScroll : MonoBehaviour
 
     void CameraMove()
     {
-        if(Input.GetKey(KeyCode.W))
+        
+        if (Input.GetKey(KeyCode.W))
         {
-            this.transform.Translate(0.0f, 0.0f, 0.01f);//前方
+            this.transform.Translate(0.0f, 0.01f, 0.0f);//上昇
         }
-        if(Input.GetKey(KeyCode.A))
+        if (Input.GetKey(KeyCode.A))
         {
             this.transform.Translate(-0.01f, 0.0f, 0.0f);//左
         }
-        if(Input.GetKey(KeyCode.S))
+        if (Input.GetKey(KeyCode.S))
         {
-            this.transform.Translate(0.0f, 0.0f, -0.01f);//後方
+            this.transform.Translate(0.0f, -0.01f, 0.0f);//下降
         }
         if (Input.GetKey(KeyCode.D))
         {
             this.transform.Translate(0.01f, 0.0f, 0.0f);//右
         }
-        if (Input.GetKey(KeyCode.E))
-        {
-            this.transform.Translate(0.0f, 0.01f, 0.0f);//上昇
-        }
-        if(Input.GetKey(KeyCode.Q))
-        {
-            this.transform.Translate(0.0f, -0.01f, 0.0f);//下降
-        }
+       
     }
 
     void CameraRotation()
     {
+
+
         if (Input.GetKey(KeyCode.RightArrow))
         {
             this.transform.Rotate(0.0f, 0.1f, 0.0f);
         }
-        if(Input.GetKey(KeyCode.LeftArrow))
+
+
+        if (Input.GetKey(KeyCode.LeftArrow))
         {
             this.transform.Rotate(0.0f, -0.1f, 0.0f);
+        }
+
+        if (Input.GetKey(KeyCode.E))
+        {
+            this.transform.Rotate(-0.1f, 0.0f, 0.0f);
+        }
+        if (Input.GetKey(KeyCode.Q))
+        {
+            this.transform.Rotate(0.1f, 0.0f, 0.0f);
+        }
+
+
+
+
+
+
+        if (Input.GetKey(KeyCode.Alpha0))//0を押すと角度をリセットする
+        {
+
+            transform.rotation = Quaternion.identity;
         }
     }
 
     void FollowMove()
     {
-        //Vector3 loclpos= Sphere.transform.position + offset;
-        //transform.position= loclpos;
+       
         transform.position = Sphere.transform.position + offset;
     }
 
@@ -130,8 +150,7 @@ public class CameraScroll : MonoBehaviour
                     break;
                 case MODE.MOVED:
                     mode = MODE.FOLLOW;
-                    offset = transform.position - Sphere.transform.position;
-                    transform.position = Sphere.transform.position;
+                    FollowInit();                    
                     text.text = "CameraMove:FOLLOW";
                     break;
                 case MODE.FOLLOW:
@@ -147,5 +166,25 @@ public class CameraScroll : MonoBehaviour
     {
         fix=subcamera[stageNo].transform.position;
         fixRot= subcamera[stageNo].transform.rotation;
+    }
+    public void FollowInit()
+    {
+        Vector3 locpos = Sphere.transform.position- transform.position;
+        Vector3 repos=locpos.normalized;
+        offset = transform.position - Sphere.transform.position;
+        transform.position = Sphere.transform.position;
+
+        if(VecComp (locpos, Vector3.Scale(repos,vec10)))
+        {
+            
+        }
+
+    }
+
+    public bool VecComp(Vector3 ve1, Vector3 ve2)
+    {
+        //一つ目の引数のほうが大きければtrue
+        //そうでなければfalse
+        return (ve1.x>=ve2.x&& ve1.y >= ve2.y&& ve1.z >= ve2.z);
     }
 }
