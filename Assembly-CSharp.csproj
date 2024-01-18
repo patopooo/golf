@@ -9,7 +9,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{738AFC50-6A81-77D2-C372-B739172732C8}</ProjectGuid>
+    <ProjectGuid>{7EFB1969-E145-9CEB-852E-4EF590F60AD7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -56,9 +56,12 @@
     <Analyzer Include="C:\Program Files\Microsoft Visual Studio\2022\Professional\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Script\SphereBooster.cs" />
-    <Compile Include="Assets\Script\CameraScroll.cs" />
-    <Compile Include="Assets\Script\Fade.cs" />
+    <Compile Include="Assets\Scripts\SphereBooster.cs" />
+    <Compile Include="Assets\Scripts\CameraController.cs" />
+    <Compile Include="Assets\Scripts\TriggerChecker.cs" />
+    <Compile Include="Assets\Scripts\GuideManager.cs" />
+    <Compile Include="Assets\Scripts\CameraScroll.cs" />
+    <Compile Include="Assets\Scripts\Fade.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
