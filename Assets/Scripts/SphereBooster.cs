@@ -155,6 +155,8 @@ public class SphereBooster : MonoBehaviour
 	// カメラコントローラへの参照キャッシュ
 	CameraController cameraController;
 
+	public bool Isupdate;
+
 	void Start()
 	{
 		rb = gameObject.GetComponent<Rigidbody>();
@@ -170,7 +172,7 @@ public class SphereBooster : MonoBehaviour
 		boostButton = boostButtonObject.GetComponent<Button>();
 
 		cameraController = cameraObject.GetComponent<CameraController>();
-
+		Isupdate=true;
 		// DistanceTextとHighScoreTextの初期値をセット
 		SetDistanceText(0f);
 		SetHighScoreText(0f);
@@ -178,18 +180,27 @@ public class SphereBooster : MonoBehaviour
 
 	void Update()
 	{
-		// キーボードからの入力を監視
-		CheckInput();
+		if(Isupdate)
+        {
+			// キーボードからの入力を監視
+			CheckInput();
 
-		// forceAngleの変更を反映する
-		CalcForceDirection();
+			// forceAngleの変更を反映する
+			CalcForceDirection();
 
-		// powerMeterを動かす
-		MovePowerMeter();
+			// powerMeterを動かす
+			MovePowerMeter();
 
-		// 角度を変更する
-		ChangeForceAngle();
-		ChangeArrowAngle();
+			// 角度を変更する
+			ChangeForceAngle();
+			ChangeArrowAngle();
+		}
+        else 
+		{
+			// 角度矢印を非表示にする
+			angleArrowObject.SetActive(false);
+		}
+		
 	}
 
 	void FixedUpdate()
@@ -658,4 +669,8 @@ public class SphereBooster : MonoBehaviour
 		// ボールを打った場所に戻して再開
 		StopFlying();
 	}
+	public void SetIsupdate(bool Is)
+    {
+		Isupdate = Is;
+    }
 }

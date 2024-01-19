@@ -12,33 +12,52 @@ public class CameraScroll : MonoBehaviour
         FOLLOW//自動で追従
     };
 
-    static Vector3 vec10 = new Vector3(10, 10, 10);
+    static Vector3 vec0 = new Vector3(0, 0, 0);
+    static Vector3 vec01 = new Vector3(0.1f, 0.1f, 0.1f);
+    static Vector3 vec5 = new Vector3(5, 5, 5);
+    static Vector3 vecfol = new Vector3(2, 8, -10);
 
-    SphereBooster sphereBooster;
     GameObject fades;
     Fade fade;
+
     public new Transform camera;
     //固定位置、ステージの初期位置
     public GameObject[] subcamera;
     Vector3 fix;
     Quaternion fixRot;
-    
+
+    //マウスで動かす用
+    bool mouseflg=false;
+    private Vector3 angle;
+    private Vector3 primary_angle;
+
     public Text text; //モード確認用
     MODE mode;//モード管理
     bool changeflag = false;//true:フェードイン（チェンジ不可）false:チェンジ可能
 
     //フォロー
+    private Vector3 followpos;//フォローする場合の最低限の距離
     public GameObject Sphere;//キャラクター
+    SphereBooster sphereBooster;//処理を止めるためのプログラム取得用
     private Vector3 offset;//カメラとの距離
+    float speed = 1f;//線形補間の速度
+    bool folflag=false;
+    //debug
+    public Text postext;
+
+    
 
     // Start is called before the first frame update
     void Start()
     {
+        angle = this.gameObject.transform.localEulerAngles;
+        primary_angle = this.gameObject.transform.localEulerAngles;
         fades = GameObject.Find("FadePanel");
         fade = fades.GetComponent<Fade>();
-        sphereBooster = GetComponent<SphereBooster>();
+        sphereBooster = Sphere.GetComponent<SphereBooster>();
         camera = GetComponent<Transform>();
         offset = transform.position - Sphere.transform.position;
+        followpos = vec0;
         mode = MODE.FIX;
         FixPointInit(0);
     }
@@ -55,8 +74,10 @@ public class CameraScroll : MonoBehaviour
             case MODE.MOVED:
                 CameraMove();
                 CameraRotation();
+                CameraMoveMouse();
                 break;
             case MODE.FOLLOW:
+                FollowReserve();
                 FollowMove();
                 break;
             default:
@@ -124,10 +145,68 @@ public class CameraScroll : MonoBehaviour
         }
     }
 
+    void CameraMoveMouse()
+    {
+
+        if(Input.GetMouseButtonDown(1))
+        {
+            if(mouseflg)
+            {
+                mouseflg = false;
+                return;
+            }
+            mouseflg=true;
+        }
+
+        if(mouseflg)
+        {
+            angle.y += Input.GetAxis("Mouse X");
+            if (angle.y <= primary_angle.y - 30f)
+            {
+                angle.y = primary_angle.y - 30f;
+            }
+            if (angle.y >= primary_angle.y + 30f)
+            {
+                angle.y = primary_angle.y + 30f;
+            }
+
+            angle.x -= Input.GetAxis("Mouse Y");
+            if (angle.x <= primary_angle.x - 30f)
+            {
+                angle.x = primary_angle.x - 30f;
+            }
+            if (angle.x >= primary_angle.x + 30f)
+            {
+                angle.x = primary_angle.x + 30f;
+            }
+
+            this.gameObject.transform.localEulerAngles = angle;
+        }
+       
+    }
+    void FollowReserve()
+    {
+        if(!(followpos==vec0))
+        {
+            transform.position = Vector3.Lerp(transform.position, followpos, speed * Time.deltaTime);
+            transform.rotation= Quaternion.Lerp(transform.rotation,Quaternion.Euler(30.0f, 0f,0f), speed * Time.deltaTime);
+        }
+        
+        if(VecComp(vec01, followpos - transform.position))
+        {
+            sphereBooster.Isupdate=true;
+            folflag=true;
+            offset = transform.position - Sphere.transform.position;
+            transform.rotation = Quaternion.Euler(30.0f, 0f, 0f);
+            followpos = vec0;
+        }
+    }
     void FollowMove()
     {
-       
-        transform.position = Sphere.transform.position + offset;
+       if(folflag)
+        {
+            transform.position = Sphere.transform.position + offset;
+        }
     }
 
     public void ChangeMode()
@@ -155,6 +234,7 @@ public class CameraScroll : MonoBehaviour
                     break;
                 case MODE.FOLLOW:
                     mode = MODE.FIX;
+                    folflag=false;
                     text.text = "CameraMove:FIX";
                     break;
             }
@@ -170,21 +250,21 @@ public class CameraScroll : MonoBehaviour
     public void FollowInit()
     {
         Vector3 locpos = Sphere.transform.position- transform.position;
-        Vector3 repos=locpos.normalized;
-        offset = transform.position - Sphere.transform.position;
-        transform.position = Sphere.transform.position;
-
-        if(VecComp (locpos, Vector3.Scale(repos,vec10)))
+        
+        if (Mathf.Abs(locpos.x) > vecfol.x )
         {
-            
+            followpos = vecfol;
         }
+        sphereBooster.Isupdate = false;
+        postext.text = "pos" + followpos;
 
     }
 
     public bool VecComp(Vector3 ve1, Vector3 ve2)
     {
+
         //一つ目の引数のほうが大きければtrue
         //そうでなければfalse
-        return (ve1.x>=ve2.x&& ve1.y >= ve2.y&& ve1.z >= ve2.z);
+        return (ve1.x > ve2.x && ve1.y >ve2.y && ve1.z > ve2.z);
     }
 }
