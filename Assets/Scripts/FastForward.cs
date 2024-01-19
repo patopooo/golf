@@ -13,8 +13,6 @@ public class FastForward : MonoBehaviour
 	// ボタン押下フラグ
 	bool isButtonPressed = false;
 
-	bool isspace=false;
-
 	void Start()
 	{
 
@@ -31,22 +29,11 @@ public class FastForward : MonoBehaviour
 		// スケール格納用ローカル変数
 		float newTimeScale = 1.0f;
 
-		if (Input.GetKeyDown(KeyCode.Space))
-		{
-			if(isspace)
-            {
-				isspace = false;
-				return;
-            }
-			isspace = true;
-		}
-
-		if (isButtonPressed||isspace)
+		if (isButtonPressed)
 		{
 			// ボタンが押されている間は早送りする
 			newTimeScale = scale;
 		}
-		
 		// Unity世界の時間にスケールを適用
 		Time.timeScale = newTimeScale;
 	}
