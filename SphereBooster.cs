@@ -353,7 +353,7 @@ public class SphereBooster : MonoBehaviour
 			isCheckingDistance = false;
 
 			// カメラ追随フラグをfalseにする
-			cameraController.SetTracingState(false);
+			//cameraController.SetTracingState(false);
 
 			// ミステキストのアニメーションを開始
 			StartCoroutine(MissAnimation(0.8f));
